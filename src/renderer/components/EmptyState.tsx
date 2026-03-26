@@ -5,9 +5,10 @@ import { theme } from '../styles/theme'
 interface EmptyStateProps {
   onDiscover: () => void
   onAddManually: () => void
+  onPsnRegister: () => void
 }
 
-export function EmptyState({ onDiscover, onAddManually }: EmptyStateProps): React.ReactElement {
+export function EmptyState({ onDiscover, onAddManually, onPsnRegister }: EmptyStateProps): React.ReactElement {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -46,24 +47,44 @@ export function EmptyState({ onDiscover, onAddManually }: EmptyStateProps): Reac
       >
         Discover Consoles
       </motion.button>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onAddManually}
-        style={{
-          padding: '12px 32px',
-          borderRadius: 24,
-          border: `1px solid ${theme.colors.accent}`,
-          background: 'transparent',
-          color: theme.colors.accent,
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
-      >
-        Add Manually
-      </motion.button>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onAddManually}
+          style={{
+            padding: '12px 32px',
+            borderRadius: 24,
+            border: `1px solid ${theme.colors.accent}`,
+            background: 'transparent',
+            color: theme.colors.accent,
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Add Manually
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onPsnRegister}
+          style={{
+            padding: '12px 32px',
+            borderRadius: 24,
+            border: '1px solid #003087',
+            background: 'rgba(0, 48, 135, 0.15)',
+            color: '#4d9fff',
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Register via PSN
+        </motion.button>
+      </div>
     </motion.div>
   )
 }

@@ -1,7 +1,9 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { loadHosts, addManualHost, removeHost } from './chiaki-config'
+import { loadHosts, addManualHost, removeHost, readPsnTokens, clearPsnTokens } from './chiaki-config'
 import { DiscoveryService } from './discovery'
 import { ProcessManager } from './process-manager'
+import { startPsnOAuth } from './psn-auth'
+import { launchChiakiRegistration } from './registration'
 import { HostInfo, IpcResult } from './types'
 
 let hosts: HostInfo[] = []
@@ -96,5 +98,51 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
 
   ipcMain.handle('window:close', () => {
     getWindow()?.close()
+  })
+
+  // PSN handlers
+  ipcMain.handle('psn:get-tokens', () => {
+    return readPsnTokens()
+  })
+
+  ipcMain.handle('psn:login', async (): Promise<IpcResult> => {
+    const win = getWindow()
+    if (!win) return { success: false, error: 'No window available' }
+    try {
+      const tokens = await startPsnOAuth(win)
+      return { success: true, data: tokens }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (msg === 'Login window closed') return { success: false, error: 'Login cancelled' }
+      return { success: false, error: msg }
+    }
+  })
+
+  ipcMain.handle('psn:logout', (): IpcResult => {
+    try {
+      clearPsnTokens()
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: `Failed to clear tokens: ${err instanceof Error ? err.message : String(err)}` }
+    }
+  })
+
+  // Registration handlers
+  ipcMain.handle('registration:launch', async (): Promise<IpcResult> => {
+    try {
+      const { newHosts } = await launchChiakiRegistration()
+      hosts = loadHosts()
+      discovery.updateHosts(hosts)
+      getWindow()?.webContents.send('hosts:updated', hosts)
+      return {
+        success: true,
+        message: newHosts.length > 0
+          ? `Registered ${newHosts.length} new console(s)`
+          : 'No new consoles registered',
+        data: { newHosts, totalHosts: hosts.length },
+      }
+    } catch (err) {
+      return { success: false, error: `Registration failed: ${err instanceof Error ? err.message : String(err)}` }
+    }
   })
 }

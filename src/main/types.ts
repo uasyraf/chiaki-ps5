@@ -5,6 +5,13 @@ export interface IpcResult {
   data?: unknown
 }
 
+export interface PsnTokens {
+  accountId: string
+  authToken: string
+  refreshToken: string
+  authTokenExpiry: string
+}
+
 export interface HostInfo {
   id: string
   nickname: string

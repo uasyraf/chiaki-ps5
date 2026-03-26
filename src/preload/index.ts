@@ -3,6 +3,15 @@ import { contextBridge, ipcRenderer } from 'electron'
 interface IpcResult {
   success: boolean
   error?: string
+  message?: string
+  data?: unknown
+}
+
+interface PsnTokens {
+  accountId: string
+  authToken: string
+  refreshToken: string
+  authTokenExpiry: string
 }
 
 interface HostInfo {
@@ -35,6 +44,14 @@ export interface ElectronAPI {
     removeEndedListener: () => void
   }
   wakeup: (params: { nickname: string; host: string; registKey: string }) => Promise<IpcResult>
+  psn: {
+    getTokens: () => Promise<PsnTokens | null>
+    login: () => Promise<IpcResult>
+    logout: () => Promise<IpcResult>
+  }
+  registration: {
+    launch: () => Promise<IpcResult>
+  }
   app: {
     quit: () => Promise<void>
     minimize: () => Promise<void>
@@ -66,6 +83,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   },
   wakeup: (params) => ipcRenderer.invoke('wakeup', params),
+  psn: {
+    getTokens: () => ipcRenderer.invoke('psn:get-tokens'),
+    login: () => ipcRenderer.invoke('psn:login'),
+    logout: () => ipcRenderer.invoke('psn:logout'),
+  },
+  registration: {
+    launch: () => ipcRenderer.invoke('registration:launch'),
+  },
   app: {
     quit: () => ipcRenderer.invoke('app:quit'),
     minimize: () => ipcRenderer.invoke('window:minimize'),

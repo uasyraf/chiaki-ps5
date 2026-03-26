@@ -1,12 +1,12 @@
 import fs from 'fs'
 import path from 'path'
 import ini from 'ini'
-import { HostInfo, IpcResult } from './types'
+import { HostInfo, IpcResult, PsnTokens } from './types'
 
 export type { HostInfo }
 
 const PS5_TARGET = 1000100
-const CONFIG_PATH = path.join(process.env.HOME || '', '.config/Chiaki/Chiaki.conf')
+export const CONFIG_PATH = path.join(process.env.HOME || '', '.config/Chiaki/Chiaki.conf')
 
 function stripByteArray(value: string): string {
   const match = value.match(/^@ByteArray\((.+?)\)$/)
@@ -175,4 +175,55 @@ export function removeHost(id: string): IpcResult {
   } catch (err) {
     return { success: false, error: `Failed to update config: ${err instanceof Error ? err.message : String(err)}` }
   }
+}
+
+export function readPsnTokens(): PsnTokens | null {
+  if (!fs.existsSync(CONFIG_PATH)) return null
+
+  const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+  const config = ini.parse(raw)
+  const settings = config.settings || {}
+
+  const accountId = settings.psn_account_id || ''
+  const authToken = settings.psn_auth_token || ''
+  const refreshToken = settings.psn_refresh_token || ''
+  const authTokenExpiry = settings.psn_auth_token_expiry || ''
+
+  if (!accountId && !authToken) return null
+
+  return { accountId, authToken, refreshToken, authTokenExpiry }
+}
+
+export function writePsnTokens(tokens: PsnTokens): void {
+  const configDir = path.dirname(CONFIG_PATH)
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true })
+  }
+
+  const raw = fs.existsSync(CONFIG_PATH) ? fs.readFileSync(CONFIG_PATH, 'utf-8') : ''
+  const config = ini.parse(raw)
+
+  if (!config.settings) config.settings = {}
+  config.settings.psn_account_id = tokens.accountId
+  config.settings.psn_auth_token = tokens.authToken
+  config.settings.psn_refresh_token = tokens.refreshToken
+  config.settings.psn_auth_token_expiry = tokens.authTokenExpiry
+
+  fs.writeFileSync(CONFIG_PATH, ini.stringify(config))
+}
+
+export function clearPsnTokens(): void {
+  if (!fs.existsSync(CONFIG_PATH)) return
+
+  const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+  const config = ini.parse(raw)
+
+  if (config.settings) {
+    delete config.settings.psn_account_id
+    delete config.settings.psn_auth_token
+    delete config.settings.psn_refresh_token
+    delete config.settings.psn_auth_token_expiry
+  }
+
+  fs.writeFileSync(CONFIG_PATH, ini.stringify(config))
 }

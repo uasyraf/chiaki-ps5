@@ -6,6 +6,7 @@ import { SettingsPanel } from './components/SettingsPanel'
 import { EmptyState } from './components/EmptyState'
 import { ToastContainer } from './components/Toast'
 import { AddConsoleModal } from './components/AddConsoleModal'
+import { PsnLoginModal } from './components/PsnLoginModal'
 import { useHosts } from './hooks/useHosts'
 import { useGamepad } from './hooks/useGamepad'
 import { useSettings } from './hooks/useSettings'
@@ -22,6 +23,7 @@ export function App(): React.ReactElement {
   const { hosts, selectedIndex, setSelectedIndex, connect, wake, discover, refresh, addHost, removeHost } = useHosts(showToast)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [addConsoleOpen, setAddConsoleOpen] = useState(false)
+  const [psnModalOpen, setPsnModalOpen] = useState(false)
   const [settings, updateSettings] = useSettings()
 
   useGamepad({
@@ -56,13 +58,18 @@ export function App(): React.ReactElement {
             onWake={wake}
           />
         ) : (
-          <EmptyState onDiscover={discover} onAddManually={() => setAddConsoleOpen(true)} />
+          <EmptyState
+            onDiscover={discover}
+            onAddManually={() => setAddConsoleOpen(true)}
+            onPsnRegister={() => setPsnModalOpen(true)}
+          />
         )}
       </main>
       <ControlBar
         onDiscover={discover}
         onRefresh={refresh}
         onAddConsole={() => setAddConsoleOpen(true)}
+        onPsnRegister={() => setPsnModalOpen(true)}
         onSettings={() => setSettingsOpen(true)}
         onQuit={() => window.electronAPI.app.quit()}
       />
@@ -77,6 +84,11 @@ export function App(): React.ReactElement {
         open={addConsoleOpen}
         onClose={() => setAddConsoleOpen(false)}
         onAdd={addHost}
+      />
+      <PsnLoginModal
+        open={psnModalOpen}
+        onClose={() => setPsnModalOpen(false)}
+        onHostsChanged={refresh}
       />
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>

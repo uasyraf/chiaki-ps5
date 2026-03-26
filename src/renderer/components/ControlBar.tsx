@@ -6,11 +6,12 @@ interface ControlBarProps {
   onDiscover: () => void
   onRefresh: () => void
   onAddConsole: () => void
+  onPsnRegister: () => void
   onSettings: () => void
   onQuit: () => void
 }
 
-export function ControlBar({ onDiscover, onRefresh, onAddConsole, onSettings, onQuit }: ControlBarProps): React.ReactElement {
+export function ControlBar({ onDiscover, onRefresh, onAddConsole, onPsnRegister, onSettings, onQuit }: ControlBarProps): React.ReactElement {
   return (
     <div style={{
       height: 64,
@@ -26,6 +27,7 @@ export function ControlBar({ onDiscover, onRefresh, onAddConsole, onSettings, on
       <ControlButton label="Discover" icon="search" onClick={onDiscover} />
       <ControlButton label="Refresh" icon="refresh" onClick={onRefresh} />
       <ControlButton label="Add Console" icon="plus" onClick={onAddConsole} />
+      <ControlButton label="PSN Register" icon="psn" onClick={onPsnRegister} />
       <ControlButton label="Settings" icon="settings" onClick={onSettings} />
       <ControlButton label="Quit" icon="power" onClick={onQuit} accent />
     </div>
@@ -42,6 +44,7 @@ function ControlButton({ label, icon, onClick, accent }: {
     search: '\u{1F50D}',
     refresh: '\u21BB',
     plus: '+',
+    psn: '\u{1F3AE}',
     settings: '\u2699',
     power: '\u23FB',
   }
