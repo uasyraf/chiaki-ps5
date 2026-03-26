@@ -45,12 +45,12 @@ export function ConsoleCard({ host, selected, onSelect, onConnect, onWake }: Con
       }}
       transition={{ duration: theme.animation.normal }}
       style={{
-        width: theme.card.width,
-        height: theme.card.height,
+        width: 'clamp(200px, 25vw, 280px)',
+        height: 'clamp(280px, 35vw, 360px)',
         background: selected ? theme.colors.bgCardHover : theme.colors.bgCard,
         borderRadius: theme.radius.default,
         border: selected ? `2px solid ${theme.colors.accent}` : '2px solid transparent',
-        padding: '24px',
+        padding: 'clamp(16px, 2vw, 24px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -65,15 +65,15 @@ export function ConsoleCard({ host, selected, onSelect, onConnect, onWake }: Con
         <img
           src={host.isPS5 ? './ps5-console.svg' : './ps4-console.svg'}
           alt={host.isPS5 ? 'PS5' : 'PS4'}
-          style={{ width: 100, height: 100, opacity: 0.9 }}
+          style={{ width: 'clamp(60px, 10vw, 100px)', height: 'clamp(60px, 10vw, 100px)', opacity: 0.9 }}
         />
       </div>
 
       <div style={{ textAlign: 'center', width: '100%' }}>
-        <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>
+        <div style={{ fontSize: 'clamp(16px, 1.5vw, 18px)', fontWeight: 600, marginBottom: 4 }}>
           {host.nickname}
         </div>
-        <div style={{ fontSize: 13, color: theme.colors.textSecondary, marginBottom: 12 }}>
+        <div style={{ fontSize: 'clamp(12px, 1.1vw, 13px)', color: theme.colors.textSecondary, marginBottom: 12 }}>
           {host.hostAddress}
         </div>
 

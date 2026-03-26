@@ -20,7 +20,7 @@ export function StatusBar({ hostCount, onlineCount }: StatusBarProps): React.Rea
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 20px 0 80px',
+      padding: '0 12px 0 16px',
       background: 'rgba(26, 29, 46, 0.6)',
       backdropFilter: 'blur(10px)',
       borderBottom: '1px solid rgba(255,255,255,0.05)',

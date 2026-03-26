@@ -36,11 +36,11 @@ export function CardCarousel({ hosts, selectedIndex, onSelect, onConnect, onWake
       ref={scrollRef}
       style={{
         display: 'flex',
-        gap: 24,
+        gap: 16,
         overflowX: 'auto',
         overflowY: 'hidden',
         scrollSnapType: 'x mandatory',
-        padding: '20px 40px',
+        padding: '20px clamp(16px, 3vw, 40px)',
         width: '100%',
         justifyContent: hosts.length <= 3 ? 'center' : 'flex-start',
       }}

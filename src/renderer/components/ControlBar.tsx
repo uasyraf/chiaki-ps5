@@ -14,11 +14,13 @@ interface ControlBarProps {
 export function ControlBar({ onDiscover, onRefresh, onAddConsole, onPsnRegister, onSettings, onQuit }: ControlBarProps): React.ReactElement {
   return (
     <div style={{
-      height: 64,
+      minHeight: 56,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 32,
+      flexWrap: 'wrap',
+      gap: 'clamp(8px, 2vw, 32px)',
+      padding: '8px 16px',
       background: 'rgba(26, 29, 46, 0.6)',
       backdropFilter: 'blur(10px)',
       borderTop: '1px solid rgba(255,255,255,0.05)',
@@ -58,7 +60,7 @@ function ControlButton({ label, icon, onClick, accent }: {
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        padding: '8px 20px',
+        padding: '8px clamp(8px, 1.5vw, 20px)',
         border: accent ? `1px solid ${theme.colors.accent}` : '1px solid rgba(255,255,255,0.1)',
         borderRadius: 20,
         background: accent ? `${theme.colors.accent}20` : 'rgba(255,255,255,0.03)',
