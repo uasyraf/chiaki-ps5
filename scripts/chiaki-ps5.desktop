@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Chiaki PS5
+Comment=PS5-inspired Remote Play Launcher
+Exec=chiaki-ps5
+Icon=applications-games
+Type=Application
+Categories=Game;Network;
+Keywords=PlayStation;PS5;Remote Play;Chiaki;

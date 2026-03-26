@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- Main body - angular parallelogram shape -->
+  <polygon points="20,45 100,40 105,80 15,85" fill="#2d3142"/>
+  <!-- Top beveled edge -->
+  <polygon points="20,45 100,40 98,48 22,53" fill="#3a3f54"/>
+  <!-- Light accent strip -->
+  <rect x="20" y="55" width="80" height="2" rx="1" fill="#4a5068"/>
+  <!-- Disc slot -->
+  <rect x="30" y="60" width="40" height="1.5" rx="0.75" fill="#1a1d2e"/>
+  <!-- Power/eject buttons -->
+  <circle cx="80" cy="65" r="1.5" fill="#4a5068"/>
+  <circle cx="86" cy="65" r="1.5" fill="#4a5068"/>
+  <!-- Bottom shadow -->
+  <polygon points="15,85 105,80 108,83 12,88" fill="#1a1d2e" opacity="0.4"/>
+</svg>

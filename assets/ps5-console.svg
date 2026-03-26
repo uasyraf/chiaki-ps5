@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Left wing -->
+  <path d="M30 100 Q28 95 26 20 Q27 12 35 10 L50 10 Q52 12 52 20 L52 100 Z"
+        fill="#e8eaed" filter="url(#shadow)"/>
+  <!-- Right wing -->
+  <path d="M90 100 Q92 95 94 20 Q93 12 85 10 L70 10 Q68 12 68 20 L68 100 Z"
+        fill="#e8eaed" filter="url(#shadow)"/>
+  <!-- Center dark strip -->
+  <rect x="52" y="10" width="16" height="90" rx="1" fill="#1a1d2e"/>
+  <!-- Center accent line -->
+  <line x1="60" y1="14" x2="60" y2="96" stroke="#2a2f45" stroke-width="1"/>
+  <!-- Power indicator -->
+  <circle cx="60" cy="22" r="2" fill="#4a90d9" opacity="0.8"/>
+</svg>
