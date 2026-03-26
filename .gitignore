@@ -1,11 +1,7 @@
+node_modules/
+out/
+dist/
 build/
-cmake-build-*/
 .cache/
-.qt/
-*.o
-*.a
-*.so
-*.user
-CMakeUserPresets.json
-compile_commands.json
+*.tsbuildinfo
 .claude-flow/
