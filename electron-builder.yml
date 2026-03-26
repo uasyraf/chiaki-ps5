@@ -1,0 +1,20 @@
+appId: com.chiaki-ps5.app
+productName: Chiaki PS5
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**/*
+  - node_modules/**/*
+  - package.json
+linux:
+  target:
+    - target: pacman
+      arch: [x64]
+    - target: AppImage
+      arch: [x64]
+  icon: pkg/aur/chiaki-ps5.svg
+  category: Game
+pacman:
+  depends:
+    - hicolor-icon-theme

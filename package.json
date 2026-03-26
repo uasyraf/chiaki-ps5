@@ -2,10 +2,15 @@
   "name": "chiaki-ps5",
   "version": "1.0.0",
   "description": "PS5-inspired Remote Play Launcher",
+  "author": {
+    "name": "uasyraf",
+    "email": "uasyraf@users.noreply.github.com"
+  },
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
+    "dist": "electron-vite build && electron-builder --linux pacman AppImage",
     "preview": "electron-vite preview",
     "start": "electron39 ./out/main/index.js"
   },
@@ -20,6 +25,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "electron": "^39.0.0",
+    "electron-builder": "^26.8.1",
     "electron-vite": "^2.3.0",
     "typescript": "^5.5.0"
   }
