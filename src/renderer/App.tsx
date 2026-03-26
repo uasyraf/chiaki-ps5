@@ -4,9 +4,12 @@ import { CardCarousel } from './components/CardCarousel'
 import { ControlBar } from './components/ControlBar'
 import { SettingsPanel } from './components/SettingsPanel'
 import { EmptyState } from './components/EmptyState'
+import { ToastContainer } from './components/Toast'
+import { AddConsoleModal } from './components/AddConsoleModal'
 import { useHosts } from './hooks/useHosts'
 import { useGamepad } from './hooks/useGamepad'
 import { useSettings } from './hooks/useSettings'
+import { useToast } from './hooks/useToast'
 
 declare global {
   interface Window {
@@ -15,8 +18,10 @@ declare global {
 }
 
 export function App(): React.ReactElement {
-  const { hosts, selectedIndex, setSelectedIndex, connect, wake, discover, refresh } = useHosts()
+  const { toasts, showToast, dismissToast } = useToast()
+  const { hosts, selectedIndex, setSelectedIndex, connect, wake, discover, refresh, addHost, removeHost } = useHosts(showToast)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [addConsoleOpen, setAddConsoleOpen] = useState(false)
   const [settings, updateSettings] = useSettings()
 
   useGamepad({
@@ -51,12 +56,13 @@ export function App(): React.ReactElement {
             onWake={wake}
           />
         ) : (
-          <EmptyState onDiscover={discover} />
+          <EmptyState onDiscover={discover} onAddManually={() => setAddConsoleOpen(true)} />
         )}
       </main>
       <ControlBar
         onDiscover={discover}
         onRefresh={refresh}
+        onAddConsole={() => setAddConsoleOpen(true)}
         onSettings={() => setSettingsOpen(true)}
         onQuit={() => window.electronAPI.app.quit()}
       />
@@ -67,6 +73,12 @@ export function App(): React.ReactElement {
           onClose={() => setSettingsOpen(false)}
         />
       )}
+      <AddConsoleModal
+        open={addConsoleOpen}
+        onClose={() => setAddConsoleOpen(false)}
+        onAdd={addHost}
+      />
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }

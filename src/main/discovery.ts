@@ -1,5 +1,5 @@
 import dgram from 'dgram'
-import { HostInfo } from './chiaki-config'
+import { HostInfo } from './types'
 
 const DISCOVERY_PORT = 987
 const DISCOVERY_INTERVAL = 5000

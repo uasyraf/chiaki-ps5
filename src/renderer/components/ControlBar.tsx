@@ -5,11 +5,12 @@ import { theme } from '../styles/theme'
 interface ControlBarProps {
   onDiscover: () => void
   onRefresh: () => void
+  onAddConsole: () => void
   onSettings: () => void
   onQuit: () => void
 }
 
-export function ControlBar({ onDiscover, onRefresh, onSettings, onQuit }: ControlBarProps): React.ReactElement {
+export function ControlBar({ onDiscover, onRefresh, onAddConsole, onSettings, onQuit }: ControlBarProps): React.ReactElement {
   return (
     <div style={{
       height: 64,
@@ -24,6 +25,7 @@ export function ControlBar({ onDiscover, onRefresh, onSettings, onQuit }: Contro
     }}>
       <ControlButton label="Discover" icon="search" onClick={onDiscover} />
       <ControlButton label="Refresh" icon="refresh" onClick={onRefresh} />
+      <ControlButton label="Add Console" icon="plus" onClick={onAddConsole} />
       <ControlButton label="Settings" icon="settings" onClick={onSettings} />
       <ControlButton label="Quit" icon="power" onClick={onQuit} accent />
     </div>
@@ -39,6 +41,7 @@ function ControlButton({ label, icon, onClick, accent }: {
   const iconMap: Record<string, string> = {
     search: '\u{1F50D}',
     refresh: '\u21BB',
+    plus: '+',
     settings: '\u2699',
     power: '\u23FB',
   }

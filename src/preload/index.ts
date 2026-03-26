@@ -1,19 +1,40 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+interface IpcResult {
+  success: boolean
+  error?: string
+}
+
+interface HostInfo {
+  id: string
+  nickname: string
+  hostAddress: string
+  target: number
+  isPS5: boolean
+  isRegistered: boolean
+  state: 'online' | 'standby' | 'offline'
+  consoleName: string
+  consolePin: string
+  registKey: string
+  serverMac: string
+}
+
 export interface ElectronAPI {
   hosts: {
-    get: () => Promise<any[]>
-    discover: () => Promise<boolean>
-    refresh: () => Promise<any[]>
-    onUpdated: (callback: (hosts: any[]) => void) => void
+    get: () => Promise<HostInfo[]>
+    discover: () => Promise<IpcResult>
+    refresh: () => Promise<{ hosts: HostInfo[]; result: IpcResult }>
+    add: (params: { nickname: string; host: string }) => Promise<IpcResult>
+    remove: (params: { id: string }) => Promise<IpcResult>
+    onUpdated: (callback: (hosts: HostInfo[]) => void) => void
     removeUpdatedListener: () => void
   }
   stream: {
-    start: (params: { nickname: string; host: string; fullscreen?: boolean; dualsense?: boolean; passcode?: string }) => Promise<boolean>
+    start: (params: { nickname: string; host: string; fullscreen?: boolean; dualsense?: boolean; passcode?: string }) => Promise<IpcResult>
     onEnded: (callback: (code: number) => void) => void
     removeEndedListener: () => void
   }
-  wakeup: (params: { nickname: string; host: string; registKey: string }) => Promise<boolean>
+  wakeup: (params: { nickname: string; host: string; registKey: string }) => Promise<IpcResult>
   app: {
     quit: () => Promise<void>
     minimize: () => Promise<void>
@@ -26,7 +47,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     get: () => ipcRenderer.invoke('hosts:get'),
     discover: () => ipcRenderer.invoke('hosts:discover'),
     refresh: () => ipcRenderer.invoke('hosts:refresh'),
-    onUpdated: (callback: (hosts: any[]) => void) => {
+    add: (params: { nickname: string; host: string }) => ipcRenderer.invoke('hosts:add', params),
+    remove: (params: { id: string }) => ipcRenderer.invoke('hosts:remove', params),
+    onUpdated: (callback: (hosts: HostInfo[]) => void) => {
       ipcRenderer.on('hosts:updated', (_, hosts) => callback(hosts))
     },
     removeUpdatedListener: () => {

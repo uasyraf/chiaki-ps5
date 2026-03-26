@@ -1,28 +1,16 @@
 import fs from 'fs'
 import path from 'path'
 import ini from 'ini'
+import { HostInfo, IpcResult } from './types'
+
+export type { HostInfo }
 
 const PS5_TARGET = 1000100
 const CONFIG_PATH = path.join(process.env.HOME || '', '.config/Chiaki/Chiaki.conf')
 
-export interface HostInfo {
-  id: string
-  nickname: string
-  hostAddress: string
-  target: number
-  isPS5: boolean
-  isRegistered: boolean
-  state: 'online' | 'standby' | 'offline'
-  consoleName: string
-  consolePin: string
-  registKey: string
-  serverMac: string
-}
-
 function stripByteArray(value: string): string {
   const match = value.match(/^@ByteArray\((.+?)\)$/)
   if (!match) return value
-  // Strip null bytes and trailing padding
   return match[1].replace(/\\0/g, '').replace(/\0/g, '')
 }
 
@@ -52,7 +40,6 @@ export function loadHosts(): HostInfo[] {
   const registered = parseNumberedEntries(regSection)
   const manual = parseNumberedEntries(manSection)
 
-  // Build MAC -> registered info map
   const regByMac: Record<string, {
     nickname: string
     target: number
@@ -98,4 +85,94 @@ export function loadHosts(): HostInfo[] {
   }
 
   return hosts
+}
+
+function isValidHostAddress(address: string): boolean {
+  // IPv4
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(address)) return true
+  // Hostname (basic check)
+  if (/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/.test(address)) return true
+  return false
+}
+
+export function addManualHost(nickname: string, host: string): IpcResult {
+  if (!nickname.trim()) return { success: false, error: 'Nickname is required' }
+  if (!host.trim()) return { success: false, error: 'Host address is required' }
+  if (!isValidHostAddress(host.trim())) return { success: false, error: 'Invalid IP address or hostname' }
+
+  try {
+    const configDir = path.dirname(CONFIG_PATH)
+    if (!fs.existsSync(configDir)) {
+      fs.mkdirSync(configDir, { recursive: true })
+    }
+
+    const raw = fs.existsSync(CONFIG_PATH) ? fs.readFileSync(CONFIG_PATH, 'utf-8') : ''
+    const config = ini.parse(raw)
+
+    const manSection = config.manual_hosts || {}
+    const existing = parseNumberedEntries(manSection)
+    const nextIdx = Object.keys(existing).length > 0
+      ? Math.max(...Object.keys(existing).map(Number)) + 1
+      : 1
+
+    // Check for duplicate host address
+    for (const entry of Object.values(existing)) {
+      if (entry.host === host.trim()) {
+        return { success: false, error: `Host ${host} already exists` }
+      }
+    }
+
+    if (!config.manual_hosts) config.manual_hosts = {}
+    config.manual_hosts[`${nextIdx}\\host`] = host.trim()
+    config.manual_hosts[`${nextIdx}\\registered`] = 'false'
+    config.manual_hosts[`${nextIdx}\\registered_mac`] = ''
+    config.manual_hosts.size = String(nextIdx)
+
+    fs.writeFileSync(CONFIG_PATH, ini.stringify(config))
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: `Failed to write config: ${err instanceof Error ? err.message : String(err)}` }
+  }
+}
+
+export function removeHost(id: string): IpcResult {
+  try {
+    if (!fs.existsSync(CONFIG_PATH)) return { success: false, error: 'Config file not found' }
+
+    const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+    const config = ini.parse(raw)
+
+    const manSection = config.manual_hosts || {}
+    const existing = parseNumberedEntries(manSection)
+
+    let found = false
+    const newManual: Record<string, string> = {}
+    let newIdx = 1
+
+    for (const entry of Object.values(existing)) {
+      const hostAddr = entry.host || ''
+      const regMac = entry.registered_mac || ''
+      const entryId = `${hostAddr}-${regMac}`
+
+      if (entryId === id) {
+        found = true
+        continue
+      }
+
+      for (const [field, value] of Object.entries(entry)) {
+        newManual[`${newIdx}\\${field}`] = value
+      }
+      newIdx++
+    }
+
+    if (!found) return { success: false, error: 'Host not found' }
+
+    newManual.size = String(newIdx - 1)
+    config.manual_hosts = newManual
+
+    fs.writeFileSync(CONFIG_PATH, ini.stringify(config))
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: `Failed to update config: ${err instanceof Error ? err.message : String(err)}` }
+  }
 }

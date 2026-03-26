@@ -4,9 +4,10 @@ import { theme } from '../styles/theme'
 
 interface EmptyStateProps {
   onDiscover: () => void
+  onAddManually: () => void
 }
 
-export function EmptyState({ onDiscover }: EmptyStateProps): React.ReactElement {
+export function EmptyState({ onDiscover, onAddManually }: EmptyStateProps): React.ReactElement {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,6 +45,24 @@ export function EmptyState({ onDiscover }: EmptyStateProps): React.ReactElement 
         }}
       >
         Discover Consoles
+      </motion.button>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onAddManually}
+        style={{
+          padding: '12px 32px',
+          borderRadius: 24,
+          border: `1px solid ${theme.colors.accent}`,
+          background: 'transparent',
+          color: theme.colors.accent,
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        Add Manually
       </motion.button>
     </motion.div>
   )
