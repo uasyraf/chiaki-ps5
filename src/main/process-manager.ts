@@ -45,10 +45,9 @@ export class ProcessManager {
     })
   }
 
-  wakeUp(host: string, registKey: string): void {
+  wakeUp(nickname: string, host: string, registKey: string): void {
     const binary = this.findBinary()
-    const args = ['wakeup', '--host', host]
-    if (registKey) args.push('--registkey', registKey)
+    const args = ['wakeup', '--registkey', registKey, nickname, host]
 
     const proc = spawn(binary, args)
     proc.on('close', () => {}) // fire and forget

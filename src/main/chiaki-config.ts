@@ -19,6 +19,13 @@ export interface HostInfo {
   serverMac: string
 }
 
+function stripByteArray(value: string): string {
+  const match = value.match(/^@ByteArray\((.+?)\)$/)
+  if (!match) return value
+  // Strip null bytes and trailing padding
+  return match[1].replace(/\\0/g, '').replace(/\0/g, '')
+}
+
 function parseNumberedEntries(section: Record<string, string>): Record<number, Record<string, string>> {
   const entries: Record<number, Record<string, string>> = {}
   for (const [key, value] of Object.entries(section)) {
@@ -60,9 +67,9 @@ export function loadHosts(): HostInfo[] {
     regByMac[mac] = {
       nickname: entry.server_nickname || '',
       target: parseInt(entry.target || '0'),
-      hasRpKey: !!(entry.rp_key && entry.rp_key !== ''),
+      hasRpKey: !!(entry.rp_key && stripByteArray(entry.rp_key) !== ''),
       consolePin: entry.console_pin || '',
-      registKey: entry.rp_regist_key || '',
+      registKey: stripByteArray(entry.rp_regist_key || ''),
       mac
     }
   }

@@ -45,8 +45,8 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
     return true
   })
 
-  ipcMain.handle('wakeup', (_, { host, registKey }: { host: string; registKey: string }) => {
-    processManager.wakeUp(host, registKey)
+  ipcMain.handle('wakeup', (_, { nickname, host, registKey }: { nickname: string; host: string; registKey: string }) => {
+    processManager.wakeUp(nickname, host, registKey)
     return true
   })
 

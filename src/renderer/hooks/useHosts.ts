@@ -58,6 +58,7 @@ export function useHosts(): UseHostsResult {
 
   const wake = useCallback((host: HostInfo) => {
     window.electronAPI.wakeup({
+      nickname: host.nickname,
       host: host.hostAddress,
       registKey: host.registKey,
     })

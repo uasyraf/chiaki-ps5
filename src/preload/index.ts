@@ -13,7 +13,7 @@ export interface ElectronAPI {
     onEnded: (callback: (code: number) => void) => void
     removeEndedListener: () => void
   }
-  wakeup: (params: { host: string; registKey: string }) => Promise<boolean>
+  wakeup: (params: { nickname: string; host: string; registKey: string }) => Promise<boolean>
   app: {
     quit: () => Promise<void>
     minimize: () => Promise<void>
