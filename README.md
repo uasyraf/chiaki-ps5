@@ -1,6 +1,6 @@
 # Chiaki PS5
 
-A PS5-inspired remote play launcher for Linux, built with Electron and React. Wraps [chiaki-ng](https://github.com/nowrep/chiaki-ng) with a modern UI for discovering, waking, and streaming PS5 consoles on your local network.
+An Electron wrapper for [chiaki-ng](https://github.com/nowrep/chiaki-ng) with a PS5-inspired UI for discovering, waking, and streaming PS5 consoles on your local network.
 
 ![Chiaki PS5 Main UI](assets/screenshot-main.png)
 
