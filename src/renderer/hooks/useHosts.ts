@@ -18,6 +18,8 @@ interface HostInfo {
 interface IpcResult {
   success: boolean
   error?: string
+  message?: string
+  data?: unknown
 }
 
 interface UseHostsResult {
@@ -77,7 +79,7 @@ export function useHosts(showToast: (message: string, variant: ToastVariant) => 
       registKey: host.registKey,
     }).then((result: IpcResult) => {
       if (result.success) {
-        showToast(`Wake signal sent to ${host.nickname}`, 'success')
+        showToast(result.message || `Wake signal sent to ${host.nickname}`, 'success')
       } else {
         showToast(result.error || 'Wake failed', 'error')
       }
@@ -87,7 +89,14 @@ export function useHosts(showToast: (message: string, variant: ToastVariant) => 
   const discover = useCallback(() => {
     showToast('Scanning network...', 'info')
     window.electronAPI.hosts.discover().then((result: IpcResult) => {
-      if (!result.success) {
+      if (result.success) {
+        const count = typeof result.data === 'number' ? result.data : 0
+        if (count > 0) {
+          showToast(`Found ${count} new console${count > 1 ? 's' : ''}`, 'success')
+        } else {
+          showToast('No new devices found', 'info')
+        }
+      } else {
         showToast(result.error || 'Discovery failed', 'error')
       }
     })

@@ -18,10 +18,10 @@ export function registerIpcHandlers(getWindow: () => BrowserWindow | null): void
 
   ipcMain.handle('hosts:get', () => hosts)
 
-  ipcMain.handle('hosts:discover', (): IpcResult => {
+  ipcMain.handle('hosts:discover', async (): Promise<IpcResult> => {
     try {
-      discovery.discover()
-      return { success: true }
+      const found = await discovery.discoverOnce()
+      return { success: true, data: found }
     } catch (err) {
       return { success: false, error: `Discovery failed: ${err instanceof Error ? err.message : String(err)}` }
     }

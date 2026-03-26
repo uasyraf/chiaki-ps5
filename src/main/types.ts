@@ -1,6 +1,8 @@
 export interface IpcResult {
   success: boolean
   error?: string
+  message?: string
+  data?: unknown
 }
 
 export interface HostInfo {

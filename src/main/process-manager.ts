@@ -71,9 +71,11 @@ export class ProcessManager {
       }
 
       const args = ['wakeup', '--host', host, '--registkey', registKey]
+      let stdout = ''
       let stderr = ''
 
       const proc = spawn(binary, args)
+      proc.stdout?.on('data', (data: Buffer) => { stdout += data.toString() })
       proc.stderr?.on('data', (data: Buffer) => { stderr += data.toString() })
 
       proc.on('error', (err) => {
@@ -82,7 +84,8 @@ export class ProcessManager {
 
       proc.on('close', (code) => {
         if (code === 0) {
-          resolve({ success: true })
+          const message = stdout.trim() || 'Wake signal sent'
+          resolve({ success: true, message })
         } else {
           const msg = stderr.trim() || `Process exited with code ${code}`
           resolve({ success: false, error: msg })

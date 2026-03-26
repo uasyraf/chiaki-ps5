@@ -39,6 +39,17 @@ export class DiscoveryService {
     this.socket?.send(msg, 0, msg.length, DISCOVERY_PORT, '255.255.255.255')
   }
 
+  discoverOnce(timeoutMs = 3000): Promise<number> {
+    return new Promise((resolve) => {
+      const before = this.hosts.filter(h => h.state === 'online').length
+      this.discover()
+      setTimeout(() => {
+        const after = this.hosts.filter(h => h.state === 'online').length
+        resolve(after - before)
+      }, timeoutMs)
+    })
+  }
+
   private handleResponse(senderIp: string): void {
     let changed = false
     for (const host of this.hosts) {
